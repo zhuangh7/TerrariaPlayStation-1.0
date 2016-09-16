@@ -1,10 +1,14 @@
 import java.net.Socket;
+
+import javax.swing.JOptionPane;
+
 import java.io.*;
 import java.net.ServerSocket;
 
 //By Zhuangh7
-public class Client4Terraria{
-	public static void main(String[] args){
+public class Client4Terraria extends Thread{
+	private String[] args;
+	/*public static void main(String[] args){
 		//int port;
 		String room;
 		System.out.println("begin~");
@@ -15,8 +19,22 @@ public class Client4Terraria{
 		}else{
 			Client4Terraria.connectAsHost();
 		}		
+	}*/
+	
+	public Client4Terraria(String[] args){
+		this.args = args;
 	}
-
+	public void run(){
+		String room;
+		System.out.println("begin~");
+		if(args.length!=0){
+			//port = Integer.parseInt(args[0]);
+			room = args[0];
+			Client4Terraria.connectAsClient(room);
+		}else{
+			Client4Terraria.connectAsHost();
+		}
+	}
 	public static void connectAsClient(String room){
 		try{
 			String roomId = room;
@@ -32,6 +50,7 @@ public class Client4Terraria{
 			remote.setSoTimeout(1000);
 			r = br.readLine();
 			if(r.equals("null")){
+				JOptionPane.showMessageDialog(Frame.mainFrame.getContentPane(),"No such RoomId!", "系统信息", JOptionPane.WARNING_MESSAGE);
 				System.out.println("null No such RoomId!!!");
 				//System.quit(0);
 			}else{
@@ -53,6 +72,7 @@ public class Client4Terraria{
 			}
 			//connect 127.0.0.1 in the game
 		}catch(Exception e){
+			JOptionPane.showMessageDialog(Frame.mainFrame.getContentPane(),"No such RoomId!", "系统信息", JOptionPane.WARNING_MESSAGE);
 			System.out.println("timeout No such RoomId!");
 			e.printStackTrace();
 		}
@@ -72,8 +92,10 @@ public class Client4Terraria{
 			r = br.readLine();
 			roomId = r;
 			System.out.println("your Room Id is :"+r);
+			Frame.roomId.setText(roomId);
 			new waitClient(roomId,ss).run();	
 		}catch(Exception e){
+			JOptionPane.showMessageDialog(Frame.mainFrame.getContentPane(),"connect server failed!", "系统信息", JOptionPane.WARNING_MESSAGE);
 			System.out.print("connect server failed");
 			e.printStackTrace();
 		}
